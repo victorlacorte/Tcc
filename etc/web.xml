@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+                      http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+  version="3.0">
+
+   <!--
+        We will redirect all incoming requests through Google Guice filter.
+   -->
+
+   <filter>
+      <filter-name>guiceFilter</filter-name>
+      <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
+   </filter>
+
+   <filter-mapping>
+      <filter-name>guiceFilter</filter-name>
+      <url-pattern>/*</url-pattern>
+   </filter-mapping>
+
+   <!--
+        Google Guice ServletModule configuration.
+   -->
+   <listener>
+      <listener-class>br.ufscar.dc.TccBootstrap</listener-class>
+   </listener>
+
+  <!--
+       The webapp uses the DiskFileItem class to store uploaded files. It means
+       that uploaded files are written to temporary locations (if their size is
+       bigger than the set threshold) before being processed.
+
+       Such temporary files are deleted automatically, if they are no longer
+       used (more precisely, if the corresponding instance of java.io.File is
+       garbage collected. This is done silently by the
+       org.apache.commons.io.FileCleaner class, which starts a reaper thread.
+
+       This reaper thread should be stopped if it is no longer needed. In a
+       servlet environment, this is done by using a special servlet context
+       listener, called FileCleanerCleanup.
+   -->
+   <listener>
+      <listener-class>
+         org.apache.commons.fileupload.servlet.FileCleanerCleanup
+      </listener-class>
+   </listener>
+
+</web-app>
